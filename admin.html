@@ -92,7 +92,7 @@ function api(method,body,p){return fetch(method==="GET"?url(p)+"?t="+Date.now():
 function dec(b){var s=atob(b.replace(/\n/g,"")),u=new Uint8Array(s.length);for(var i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return new TextDecoder().decode(u)}
 function enc(t){var u=new TextEncoder().encode(t),s="";u.forEach(function(c){s+=String.fromCharCode(c)});return btoa(s)}
 function why(e){return e.code===401?"টোকেন ঠিক নয় বা মেয়াদ শেষ।":e.code===403?"টোকেনের অনুমতি নেই। Contents: Read and write দিয়েছেন কি না দেখুন।":e.code===404?"রিপোজিটরি বা articles.json পাওয়া যায়নি। নাম ও ফাইল দুটোই দেখুন।":e.code===409||e.code===422?"অন্য কোথাও ফাইলটা বদলেছে। পেজ রিফ্রেশ করে আবার চেষ্টা করুন।":"ইন্টারনেট বা অন্য কোনো সমস্যা হয়েছে। আবার চেষ্টা করুন।"}
-function load(){say("লোড হচ্ছে…");return api("GET").then(function(j){sha=j.sha;base=dec(j.content);A=JSON.parse(base);$("login").hidden=true;$("unl").hidden=true;$("app").hidden=false;reset();$("out").hidden=false;say("");draw();return true}).catch(function(e){say(why(e),true);gate();return false})}
+function load(){say("লোড হচ্ছে…");return api("GET").then(function(j){sha=j.sha;base=dec(j.content);A=JSON.parse(base);$("login").hidden=true;$("unl").hidden=true;$("app").hidden=false;reset();$("out").hidden=false;say("");draw();rd();return true}).catch(function(e){say(why(e),true);gate();return false})}
 function gate(){var h=!!ls("ae");$("unl").hidden=!h;$("login").hidden=h;$("app").hidden=true;$("out").hidden=true}
 function b64(u){var s="";u.forEach(function(c){s+=String.fromCharCode(c)});return btoa(s)}
 function ub(b){var s=atob(b),u=new Uint8Array(s.length);for(var i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u}
@@ -108,7 +108,7 @@ function mv(i,d){var j=i+d;if(j<0||j>=A.length)return;var t=A[i];A[i]=A[j];A[j]=
 function startEdit(i){ed=i;$("fh").textContent="লেখা বদলান";$("ti").value=A[i].title;$("ca").value=A[i].cat;$("bo").value=A[i].body.join("\n\n");$("dt").value=A[i].date||"";$("au").value=A[i].author||"";$("yt").value=A[i].yt?"https://youtu.be/"+A[i].yt:"";$("dr").checked=!!A[i].draft;$("sr").value=(A[i].src||[]).map(function(x){return x.t+(x.u?" "+x.u:"")}).join("\n");$("rv").value=A[i].rev||"";img=A[i].img||"";newImg="";showPv(img);$("cancel").hidden=false;window.scrollTo(0,0)}
 function reset(){ed=-1;$("dt").value=today();$("au").value=ls("au");$("yt").value="";$("dr").checked=false;$("sr").value="";$("rv").value="";img="";newImg="";showPv("");$("im").value="";$("fh").textContent="নতুন লেখা";$("ti").value="";$("bo").value="";$("ca").value="food";$("cancel").hidden=true}
 function wait(ms){return new Promise(function(r){setTimeout(r,ms)})}
-function put(n){var c=JSON.stringify(A,null,1);return api("PUT",{message:"Update articles",content:enc(c),sha:sha}).then(function(j){sha=j.content.sha;base=c}).catch(function(e){if((e.code===409||e.code===422)&&n>0){return wait(1500).then(function(){return api("GET")}).then(function(j){var r=dec(j.content);if(r===c){sha=j.sha;base=c;return}if(r!==base)throw e;sha=j.sha;return put(n-1)})}throw e})}
+function put(n){var c=JSON.stringify(A,null,1);return api("PUT",{message:"Update articles",content:enc(c),sha:sha}).then(function(j){sha=j.content.sha;base=c;try{localStorage.removeItem("draft")}catch(e){}}).catch(function(e){if((e.code===409||e.code===422)&&n>0){return wait(1500).then(function(){return api("GET")}).then(function(j){var r=dec(j.content);if(r===c){sha=j.sha;base=c;return}if(r!==base)throw e;sha=j.sha;return put(n-1)})}throw e})}
 function push(ok){say("প্রকাশ হচ্ছে…");return put(3).then(function(){draw();say(ok+" ১-২ মিনিটে সাইটে দেখা যাবে।")}).catch(function(e){say(why(e),true);load()})}
 function upImg(c,k){var p="images/"+Date.now()+".jpg";return api("PUT",{message:"Add image",content:c},p).then(function(){return p}).catch(function(x){if((x.code===409||x.code===422)&&k>0)return wait(1500).then(function(){return upImg(c,k-1)});throw x})}
 function showPv(src){$("pv").hidden=!src;if(src)$("pi").src=src}
@@ -133,6 +133,13 @@ if("serviceWorker" in navigator)window.addEventListener("load",function(){naviga
 window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();d=e;b.hidden=false});
 b.onclick=function(){if(!d)return;d.prompt();d.userChoice.then(function(){d=null;b.hidden=true})};
 window.addEventListener("appinstalled",function(){b.hidden=true});})();
+var DK="draft";function sd(){if(ed>=0)return;try{localStorage.setItem(DK,JSON.stringify({t:$("ti").value,b:$("bo").value,c:$("ca").value,y:$("yt").value,s:$("sr").value,r:$("rv").value}))}catch(e){}}
+function rd(){try{var d=JSON.parse(localStorage.getItem(DK)||"null");if(d&&(d.t||d.b)&&ed<0&&!$("ti").value&&!$("bo").value){$("ti").value=d.t||"";$("bo").value=d.b||"";$("ca").value=d.c||"food";$("yt").value=d.y||"";$("sr").value=d.s||"";$("rv").value=d.r||"";say("আগের অসমাপ্ত লেখা ফিরিয়ে আনা হয়েছে।")}}catch(e){}}
+["ti","bo","ca","yt","sr","rv"].forEach(function(i){$(i).addEventListener("input",sd)});
+var it;function rt(){clearTimeout(it);it=setTimeout(function(){if(!$("app").hidden)$("out").click()},600000)}["click","keydown","touchstart"].forEach(function(e){document.addEventListener(e,rt,{passive:true})});rt();
+var bk=document.createElement("button");bk.type="button";bk.className=$("out").className;bk.textContent="ব্যাকআপ";bk.hidden=true;$("out").parentNode.insertBefore(bk,$("out"));
+new MutationObserver(function(){bk.hidden=$("out").hidden}).observe($("out"),{attributes:true,attributeFilter:["hidden"]});
+bk.onclick=function(){var l=document.createElement("a");l.href=URL.createObjectURL(new Blob([JSON.stringify(A,null,1)],{type:"application/json"}));l.download="articles-backup-"+today()+".json";document.body.appendChild(l);l.click();l.remove()};
 </script>
 </body>
 </html>

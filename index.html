@@ -231,7 +231,7 @@ dialog .m{margin-bottom:10px;aspect-ratio:16/9}
 </section>
 </main>
 
-<footer><div class="wrap"><div class="brand">স্বাস্থ্য বাতায়ন টিপস</div><nav class="fl" aria-label="নিয়ম-নীতি"><button type="button" data-p="edit">সম্পাদকীয় নীতি</button><button type="button" data-p="terms">শর্তাবলি</button><button type="button" data-p="privacy">গোপনীয়তা নীতি</button><button type="button" data-p="disc">স্বাস্থ্য দাবিত্যাগ</button></nav>এই সাইটের লেখা সাধারণ তথ্যের জন্য, চিকিৎসকের পরামর্শের বিকল্প নয়। শারীরিক সমস্যা থাকলে বা ওষুধ খেলে নিবন্ধিত চিকিৎসকের সঙ্গে কথা বলুন।<br>© ২০২৬ স্বাস্থ্য বাতায়ন টিপস। সাইট মালিক: Serajul Islam।</div></footer>
+<footer><div class="wrap"><div class="brand">স্বাস্থ্য বাতায়ন টিপস</div><nav class="fl" aria-label="নিয়ম-নীতি"><button type="button" data-p="edit">সম্পাদকীয় নীতি</button><button type="button" data-p="terms">শর্তাবলি</button><button type="button" data-p="privacy">গোপনীয়তা নীতি</button><button type="button" data-p="disc">স্বাস্থ্য দাবিত্যাগ</button><button type="button" id="inst" hidden>অ্যাপ ইনস্টল করুন</button></nav>এই সাইটের লেখা সাধারণ তথ্যের জন্য, চিকিৎসকের পরামর্শের বিকল্প নয়। শারীরিক সমস্যা থাকলে বা ওষুধ খেলে নিবন্ধিত চিকিৎসকের সঙ্গে কথা বলুন।<br>© ২০২৬ স্বাস্থ্য বাতায়ন টিপস। সাইট মালিক: Serajul Islam।</div></footer>
 <button id="totop" type="button" aria-label="ওপরে যান" hidden>&#8593;</button>
 
 <dialog id="dlg" aria-label="লেখা"><button id="dx" type="button" aria-label="বন্ধ করুন">&#10005;</button><div id="dbody"></div></dialog>
@@ -257,8 +257,8 @@ if(a.rev)b.appendChild(h("p","dt","চিকিৎসক কর্তৃক প�
 if(a.src&&a.src.length){var sl=h("div","rel");sl.appendChild(h("h3","","তথ্যসূত্র"));a.src.forEach(function(x){var p=h("p","dt",x.t||"");if(/^https:\/\//.test(x.u||"")){p.textContent="";var l=h("a","",x.t||x.u);l.href=x.u;l.target="_blank";l.rel="noopener";p.appendChild(l)}sl.appendChild(p)});b.appendChild(sl)}
 var id=aid(a),sv=h("button","sh alt",SAVED.indexOf(id)>-1?"সংরক্ষিত ✓":"সংরক্ষণ করুন");sv.type="button";
 sv.onclick=function(){var i=SAVED.indexOf(id);if(i>-1)SAVED.splice(i,1);else SAVED.push(id);try{localStorage.setItem("sv",JSON.stringify(SAVED))}catch(e){}sv.textContent=SAVED.indexOf(id)>-1?"সংরক্ষিত ✓":"সংরক্ষণ করুন";chips();if(cat==="saved")draw()};
-b.append(sh,sv);
-var ab=h("div","ab");ab.append(h("b","",a.author?"লেখক: "+a.author:"প্রকাশক: Serajul Islam, সাইট মালিক, কেশবপুর, যশোর"),h("span","","এই লেখা সাধারণ তথ্যের জন্য, চিকিৎসকের পরামর্শের বিকল্প নয়। "));var lk=h("button","lk","সম্পাদকীয় নীতি");lk.type="button";lk.onclick=function(){openP("edit")};ab.appendChild(lk);b.appendChild(ab);
+b.append(sh,sv);var tb=h("button","sh alt","শুনুন");tb.type="button";tb.onclick=function(){var ss=window.speechSynthesis;if(!ss){tb.textContent="এই ফোনে সম্ভব নয়";return}if(ss.speaking){ss.cancel();tb.textContent="শুনুন";return}var u=new SpeechSynthesisUtterance(a.title+". "+a.body.join(" "));u.lang="bn-BD";u.onend=function(){tb.textContent="শুনুন"};ss.speak(u);tb.textContent="থামান"};b.appendChild(tb);
+var ab=h("div","ab");ab.append(h("b","",a.author?"লেখক: "+a.author:"প্রকাশক: Serajul Islam, সাইট মালিক, কেশবপুর, যশোর"),h("span","","এই লেখা সাধারণ তথ্যের জন্য, চিকিৎসকের পরামর্শের বিকল্প নয়। "));var lk=h("button","lk","সম্পাদকীয় নীতি");lk.type="button";lk.onclick=function(){openP("edit")};ab.appendChild(lk);b.appendChild(ab);var rl=ALL.filter(function(x){return x!==a&&ck(x)===c}).slice(0,3);if(rl.length){var rb=h("div","rel");rb.appendChild(h("h3","","এই লেখাগুলোও পড়ুন"));rl.forEach(function(x){var q=h("p","dt","");var k=h("button","lk",x.title);k.type="button";k.onclick=function(){try{speechSynthesis.cancel()}catch(e){}openA(x)};q.appendChild(k);rb.appendChild(q)});b.appendChild(rb)}
 if(SPOK[id]===undefined){SPOK[id]=false;fetch(BP+"a/"+id+"/",{method:"HEAD"}).then(function(r){SPOK[id]=r.ok}).catch(function(){})}
 var rl=ALL.filter(function(x){return x!==a&&ck(x)===c}).slice(0,3);if(rl.length){var r=h("div","rel");r.appendChild(h("h3","","আরও পড়ুন"));rl.forEach(function(x){var l=h("button","",x.title);l.type="button";l.onclick=function(){openA(x)};r.appendChild(l)});b.appendChild(r)}
 try{history.replaceState(null,"","#a="+aid(a))}catch(e){}
@@ -317,6 +317,7 @@ show()});
 var pm=location.hash.match(/^#p=(\w+)/);if(pm&&P[pm[1]])openP(pm[1]);
 var tt=$("totop");window.addEventListener("scroll",function(){tt.hidden=window.scrollY<700},{passive:true});tt.onclick=function(){window.scrollTo({top:0})};
 if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})});
+(function(){var d,b=$("inst");window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();d=e;b.hidden=false});b.onclick=function(){if(!d)return;d.prompt();d.userChoice.then(function(){d=null;b.hidden=true})};window.addEventListener("appinstalled",function(){b.hidden=true});$("dlg").addEventListener("close",function(){try{speechSynthesis.cancel()}catch(e){}})})();
 </script>
 </body>
 </html>
