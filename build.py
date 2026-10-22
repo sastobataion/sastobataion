@@ -182,6 +182,16 @@ def main():
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     sm += "".join(f"  <url><loc>{u}</loc><lastmod>{d}</lastmod></url>\n" for u, d in urls) + "</urlset>\n"
     open("sitemap.xml", "w", encoding="utf-8").write(sm)
+    items = ""
+    for a, pid in list(zip(vis, ids))[:20]:
+        try:
+            pd = datetime.datetime.strptime(a.get("date") or today, "%Y-%m-%d").strftime("%a, %d %b %Y 00:00:00 +0000")
+        except Exception:
+            pd = datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S +0000")
+        ds = esc((a.get("body") or [""])[0][:200])
+        items += f"<item><title>{esc(a['title'])}</title><link>{SITE}/a/{pid}/</link><guid>{SITE}/a/{pid}/</guid><pubDate>{pd}</pubDate><description>{ds}</description></item>\n"
+    fd = f'<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel><title>{esc(NAME)}</title><link>{SITE}/</link><description>সহজ বাংলায় স্বাস্থ্য পরামর্শ</description><language>bn</language>\n{items}</channel></rss>\n'
+    open("feed.xml", "w", encoding="utf-8").write(fd)
     print(f"{len(vis)}টা লেখার পাতা তৈরি হয়েছে")
     fetch_videos()
 
