@@ -190,7 +190,10 @@ def main():
             pd = datetime.datetime.strptime(a.get("date") or today, "%Y-%m-%d").strftime("%a, %d %b %Y 00:00:00 +0000")
         except Exception:
             pd = datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S +0000")
-        ds = esc((a.get("body") or [""])[0][:200])
+        bd = a.get("body") or [""]
+        if len(bd) > 1 and bd[0].strip() == a["title"].strip():
+            bd = bd[1:]
+        ds = esc(bd[0][:200])
         items += f"<item><title>{esc(a['title'])}</title><link>{SITE}/a/{pid}/</link><guid>{SITE}/a/{pid}/</guid><pubDate>{pd}</pubDate><description>{ds}</description></item>\n"
     fd = f'<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel><title>{esc(NAME)}</title><link>{SITE}/</link><description>সহজ বাংলায় স্বাস্থ্য পরামর্শ</description><language>bn</language>\n{items}</channel></rss>\n'
     open("feed.xml", "w", encoding="utf-8").write(fd)
