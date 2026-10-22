@@ -80,6 +80,12 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 <button id="cancel" type="button" hidden>বাতিল</button>
 </div>
 <div class="card"><h2>সব লেখা (<span id="n">0</span>)</h2><div id="list"></div></div>
+<div class="card"><details id="od"><summary><b>টিপস ও কুইজ সম্পাদনা</b></summary>
+<label for="ofs">কোনটা বদলাবেন<select id="ofs"><option value="tips">আজকের টিপস</option><option value="quiz">কুইজ</option></select></label>
+<label for="oq">টিপস বা প্রশ্ন<textarea id="oq" rows="2"></textarea></label>
+<div id="oqz" hidden><label for="oa">উত্তর<select id="oa"><option value="1">সত্য</option><option value="0">মিথ্যা</option></select></label><label for="oe">ব্যাখ্যা<textarea id="oe" rows="3"></textarea></label></div>
+<div><button id="osv" type="button">যোগ করুন</button> <button id="ocn" type="button" hidden>বাতিল</button></div>
+<div id="ol"></div></details></div>
 </div>
 </div>
 
@@ -140,6 +146,16 @@ var it;function rt(){clearTimeout(it);it=setTimeout(function(){if(!$("app").hidd
 var bk=document.createElement("button");bk.type="button";bk.className=$("out").className;bk.textContent="ব্যাকআপ";bk.hidden=true;$("out").parentNode.insertBefore(bk,$("out"));
 new MutationObserver(function(){bk.hidden=$("out").hidden}).observe($("out"),{attributes:true,attributeFilter:["hidden"]});
 bk.onclick=function(){var l=document.createElement("a");l.href=URL.createObjectURL(new Blob([JSON.stringify(A,null,1)],{type:"application/json"}));l.download="articles-backup-"+today()+".json";document.body.appendChild(l);l.click();l.remove()};
+var OT={tips:"tips.json",quiz:"quiz.json"},ok="tips",ox=null;
+function oget(){return api("GET",null,OT[ok]).then(function(j){return{sha:j.sha,a:JSON.parse(dec(j.content))}})}
+function oput(r,m){return api("PUT",{message:m,content:enc(JSON.stringify(r.a,null,1)),sha:r.sha},OT[ok])}
+function idx(a,x){var k=JSON.stringify(x);for(var i=0;i<a.length;i++)if(JSON.stringify(a[i])===k)return i;return-1}
+function omod(fn,m){say("সেভ হচ্ছে…");function go(){return oget().then(function(r){fn(r.a);return oput(r,m)})}return go().catch(function(e){if(e.code===409||e.code===422)return wait(1500).then(go);throw e}).then(function(){say("সেভ হয়েছে। ১-২ মিনিটে সাইটে দেখা যাবে।");oreset();oload()}).catch(function(e){say(why(e),true)})}
+function oreset(){ox=null;$("oq").value="";$("oe").value="";$("oa").value="1";$("osv").textContent="যোগ করুন";$("ocn").hidden=true}
+function oload(){var l=$("ol");l.textContent="";$("oqz").hidden=ok!=="quiz";oget().then(function(r){r.a.forEach(function(x){var w=document.createElement("div"),t=document.createElement("div"),b=document.createElement("div"),e=document.createElement("button"),d=document.createElement("button");w.className="row";b.className="btns";t.textContent=ok==="tips"?x:x.q;e.type=d.type="button";e.textContent="বদলান";d.textContent="মুছুন";e.onclick=function(){ox=x;$("oq").value=ok==="tips"?x:x.q;$("oa").value=x.a?"1":"0";$("oe").value=x.e||"";$("osv").textContent="বদলে সেভ করুন";$("ocn").hidden=false;$("oq").focus()};d.onclick=function(){if(!confirm("মুছে ফেলবেন?"))return;omod(function(a){var k=idx(a,x);if(k>-1)a.splice(k,1)},"Delete item")};b.append(e,d);w.append(t,b);l.appendChild(w)})}).catch(function(e){say(why(e),true)})}
+$("osv").onclick=function(){var q=$("oq").value.trim();if(!q){say("লেখাটা দিন।",true);return}var v=q;if(ok==="quiz"){v={q:q,a:$("oa").value==="1"};var ex=$("oe").value.trim();if(ex)v.e=ex}var old=ox;omod(function(a){var k=old?idx(a,old):-1;if(k>-1)a[k]=v;else a.push(v)},old?"Edit item":"Add item")};
+$("ocn").onclick=oreset;$("ofs").onchange=function(){ok=this.value;oreset();oload()};
+$("od").addEventListener("toggle",function(){if(this.open)oload()});
 </script>
 </body>
 </html>
