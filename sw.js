@@ -1,5 +1,5 @@
 var V = "sb-v2", C = V + "-core", R = V + "-run";
-var CORE = ["./", "index.html", "manifest.webmanifest", "logo.svg", "logo.png", "icon-192.png", "icon-512.png", "banner.png",
+var CORE = ["./", "index.html", "manifest.webmanifest", "admin.webmanifest", "logo.svg", "logo.png", "icon-192.png", "icon-512.png", "banner.png",
   "articles.json", "tips.json", "quiz.json", "services.json", "videos.json"];
 
 self.addEventListener("install", function (e) {

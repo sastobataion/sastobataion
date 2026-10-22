@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
+<link rel="manifest" href="admin.webmanifest">
+<meta name="theme-color" content="#1f7a5c">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="অ্যাডমিন">
 <title>অ্যাডমিন প্যানেল</title>
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -115,6 +122,14 @@ $("fg").onclick=function(){if(confirm("এই ডিভাইস থেকে �
 $("out").onclick=function(){S.t="";A=[];gate();say("লগআউট হয়েছে।")};
 ["up","pw"].forEach(function(i){$(i).onkeydown=function(e){if(e.key==="Enter")$(i==="up"?"in":"go").click()}});
 ls("at","");$("o").value=ls("ao");$("r").value=ls("ar");gate();
+</script>
+<button id="inst" type="button" hidden style="position:fixed;right:16px;bottom:16px;z-index:9;background:var(--leaf);color:var(--leaf-ink);border:0;padding:10px 20px;box-shadow:0 2px 8px rgba(0,0,0,.25)">অ্যাপ ইনস্টল করুন</button>
+<script>
+if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})});
+(function(){var d,b=document.getElementById("inst");
+window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();d=e;b.hidden=false});
+b.onclick=function(){if(!d)return;d.prompt();d.userChoice.then(function(){d=null;b.hidden=true})};
+window.addEventListener("appinstalled",function(){b.hidden=true});})();
 </script>
 </body>
 </html>
