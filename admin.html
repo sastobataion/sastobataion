@@ -84,7 +84,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 </div>
 
 <script>
-var $=function(i){return document.getElementById(i)},S={o:"",r:"",t:""},A=[],sha="",ed=-1,img="",newImg="",CAT={food:"খাবার",sleep:"ঘুম",move:"ব্যায়াম",mind:"মনের যত্ন",safe:"সুরক্ষা",child:"শিশু",women:"নারী",elder:"বয়স্ক",chronic:"দীর্ঘমেয়াদি রোগ"};
+var $=function(i){return document.getElementById(i)},S={o:"",r:"",t:""},A=[],sha="",base="",ed=-1,img="",newImg="",CAT={food:"খাবার",sleep:"ঘুম",move:"ব্যায়াম",mind:"মনের যত্ন",safe:"সুরক্ষা",child:"শিশু",women:"নারী",elder:"বয়স্ক",chronic:"দীর্ঘমেয়াদি রোগ"};
 function say(m,bad){var e=$("msg");e.textContent=m;e.style.color=bad?"var(--bad)":"var(--leaf)"}
 function ls(k,v){try{if(v===undefined)return localStorage.getItem(k)||"";if(v==="")localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){}return ""}
 function url(p){return "https://api.github.com/repos/"+encodeURIComponent(S.o)+"/"+encodeURIComponent(S.r)+"/contents/"+(p||"articles.json")}
@@ -92,7 +92,7 @@ function api(method,body,p){return fetch(method==="GET"?url(p)+"?t="+Date.now():
 function dec(b){var s=atob(b.replace(/\n/g,"")),u=new Uint8Array(s.length);for(var i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return new TextDecoder().decode(u)}
 function enc(t){var u=new TextEncoder().encode(t),s="";u.forEach(function(c){s+=String.fromCharCode(c)});return btoa(s)}
 function why(e){return e.code===401?"টোকেন ঠিক নয় বা মেয়াদ শেষ।":e.code===403?"টোকেনের অনুমতি নেই। Contents: Read and write দিয়েছেন কি না দেখুন।":e.code===404?"রিপোজিটরি বা articles.json পাওয়া যায়নি। নাম ও ফাইল দুটোই দেখুন।":e.code===409||e.code===422?"অন্য কোথাও ফাইলটা বদলেছে। পেজ রিফ্রেশ করে আবার চেষ্টা করুন।":"ইন্টারনেট বা অন্য কোনো সমস্যা হয়েছে। আবার চেষ্টা করুন।"}
-function load(){say("লোড হচ্ছে…");return api("GET").then(function(j){sha=j.sha;A=JSON.parse(dec(j.content));$("login").hidden=true;$("unl").hidden=true;$("app").hidden=false;reset();$("out").hidden=false;say("");draw();return true}).catch(function(e){say(why(e),true);gate();return false})}
+function load(){say("লোড হচ্ছে…");return api("GET").then(function(j){sha=j.sha;base=dec(j.content);A=JSON.parse(base);$("login").hidden=true;$("unl").hidden=true;$("app").hidden=false;reset();$("out").hidden=false;say("");draw();return true}).catch(function(e){say(why(e),true);gate();return false})}
 function gate(){var h=!!ls("ae");$("unl").hidden=!h;$("login").hidden=h;$("app").hidden=true;$("out").hidden=true}
 function b64(u){var s="";u.forEach(function(c){s+=String.fromCharCode(c)});return btoa(s)}
 function ub(b){var s=atob(b),u=new Uint8Array(s.length);for(var i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u}
@@ -107,14 +107,17 @@ function ytid(u){u=u.trim();if(!u)return"";var m=u.match(/(?:youtu\.be\/|v=|embe
 function mv(i,d){var j=i+d;if(j<0||j>=A.length)return;var t=A[i];A[i]=A[j];A[j]=t;push("ক্রম বদলানো হয়েছে।")}
 function startEdit(i){ed=i;$("fh").textContent="লেখা বদলান";$("ti").value=A[i].title;$("ca").value=A[i].cat;$("bo").value=A[i].body.join("\n\n");$("dt").value=A[i].date||"";$("au").value=A[i].author||"";$("yt").value=A[i].yt?"https://youtu.be/"+A[i].yt:"";$("dr").checked=!!A[i].draft;$("sr").value=(A[i].src||[]).map(function(x){return x.t+(x.u?" "+x.u:"")}).join("\n");$("rv").value=A[i].rev||"";img=A[i].img||"";newImg="";showPv(img);$("cancel").hidden=false;window.scrollTo(0,0)}
 function reset(){ed=-1;$("dt").value=today();$("au").value=ls("au");$("yt").value="";$("dr").checked=false;$("sr").value="";$("rv").value="";img="";newImg="";showPv("");$("im").value="";$("fh").textContent="নতুন লেখা";$("ti").value="";$("bo").value="";$("ca").value="food";$("cancel").hidden=true}
-function push(ok){say("প্রকাশ হচ্ছে…");return api("PUT",{message:"Update articles",content:enc(JSON.stringify(A,null,1)),sha:sha}).then(function(j){sha=j.content.sha;draw();say(ok+" ১-২ মিনিটে সাইটে দেখা যাবে।")}).catch(function(e){say(why(e),true);load()})}
+function wait(ms){return new Promise(function(r){setTimeout(r,ms)})}
+function put(n){var c=JSON.stringify(A,null,1);return api("PUT",{message:"Update articles",content:enc(c),sha:sha}).then(function(j){sha=j.content.sha;base=c}).catch(function(e){if((e.code===409||e.code===422)&&n>0){return wait(1500).then(function(){return api("GET")}).then(function(j){var r=dec(j.content);if(r===c){sha=j.sha;base=c;return}if(r!==base)throw e;sha=j.sha;return put(n-1)})}throw e})}
+function push(ok){say("প্রকাশ হচ্ছে…");return put(3).then(function(){draw();say(ok+" ১-২ মিনিটে সাইটে দেখা যাবে।")}).catch(function(e){say(why(e),true);load()})}
+function upImg(c,k){var p="images/"+Date.now()+".jpg";return api("PUT",{message:"Add image",content:c},p).then(function(){return p}).catch(function(x){if((x.code===409||x.code===422)&&k>0)return wait(1500).then(function(){return upImg(c,k-1)});throw x})}
 function showPv(src){$("pv").hidden=!src;if(src)$("pi").src=src}
 $("im").onchange=function(){var f=this.files[0];if(!f)return;var u=URL.createObjectURL(f),i=new Image();i.onload=function(){var w=Math.min(1000,i.width),h=Math.round(i.height*w/i.width),c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(i,0,0,w,h);var d=c.toDataURL("image/jpeg",0.8);newImg=d.split(",")[1];showPv(d);URL.revokeObjectURL(u)};i.onerror=function(){say("এই ছবিটা খোলা যায়নি।",true)};i.src=u};
 $("rm").onclick=function(){img="";newImg="";$("im").value="";showPv("")};
 $("save").onclick=function(){var t=$("ti").value.trim(),b=$("bo").value.split(/\n\s*\n/).map(function(p){return p.trim()}).filter(Boolean);if(!t||!b.length){say("শিরোনাম ও লেখা দুটোই দিন।",true);return}
 var a={cat:$("ca").value,title:t,body:b},yv=$("yt").value.trim(),y=ytid(yv);if(yv&&!y){say("ইউটিউব লিংকটা চেনা যায়নি।",true);return}var dv=$("dt").value,au=$("au").value.trim();if(dv)a.date=dv;if(au){a.author=au;ls("au",au)}if(y)a.yt=y;var sr=psrc($("sr").value);if(sr.length)a.src=sr;var rv=$("rv").value.trim();if(rv)a.rev=rv;if($("dr").checked)a.draft=true;var e=ed,m=e>=0?"লেখা বদলানো হয়েছে।":"নতুন লেখা যোগ হয়েছে।",n=newImg,old=img;
 function fin(p){if(p)a.img=p;a.id=e>=0?aid(A[e]):"n"+Date.now().toString(36);if(e>=0)A[e]=a;else A.unshift(a);reset();push(m)}
-if(n){say("ছবি আপলোড হচ্ছে…");var p="images/"+Date.now()+".jpg";api("PUT",{message:"Add image",content:n},p).then(function(){fin(p)}).catch(function(x){say(why(x),true)})}else fin(old)};
+if(n){say("ছবি আপলোড হচ্ছে…");upImg(n,3).then(function(p){return wait(1200).then(function(){fin(p)})}).catch(function(x){say(why(x),true)})}else fin(old)};
 $("cancel").onclick=reset;
 $("go").onclick=function(){var o=$("o").value.trim(),r=$("r").value.trim(),t=$("t").value.trim(),p=$("pw").value,pp=r.replace(/^https?:\/\//,"").split("/").filter(Boolean);if(pp.length>1){r=pp[1]}else if(pp.length===1){r=pp[0]}if(!o||!r||!t||!p){say("সবগুলো ঘর পূরণ করুন।",true);return}if(p.length<8){say("পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের দিন।",true);return}S.o=o;S.r=r;S.t=t;load().then(function(ok){if(!ok)return;return lock(t,p).then(function(b){ls("ae",b);ls("ao",o);ls("ar",r);$("t").value="";$("pw").value="";say("সেটআপ হয়েছে। এখন থেকে পাসওয়ার্ড দিয়ে ঢুকবেন।")})}).catch(function(){say("এই ব্রাউজারে সেটআপ করা যাচ্ছে না।",true)})};
 $("in").onclick=function(){var b=ls("ae"),p=$("up").value;if(!p)return;S.o=ls("ao");S.r=ls("ar");say("খোলা হচ্ছে…");unlock(b,p).then(function(t){S.t=t;$("up").value="";return load()}).catch(function(){say("পাসওয়ার্ড ঠিক নয়।",true)})};
