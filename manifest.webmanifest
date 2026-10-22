@@ -1,0 +1,21 @@
+{
+  "id": "./",
+  "name": "স্বাস্থ্য বাতায়ন টিপস",
+  "short_name": "বাতায়ন টিপস",
+  "description": "খাবার, ঘুম, ব্যায়াম ও মনের যত্ন নিয়ে সহজ বাংলায় স্বাস্থ্য পরামর্শ।",
+  "lang": "bn",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f2f6f4",
+  "theme_color": "#1f7a5c",
+  "categories": ["health", "lifestyle", "education"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
