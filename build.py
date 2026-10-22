@@ -4,7 +4,7 @@ GitHub Actions এটা নিজে থেকে চালায়। হা�
 import json, os, shutil, html, datetime, urllib.request
 import xml.etree.ElementTree as ET
 
-SITE = "https://facebookhelpbd.github.io/-"
+SITE = "https://sastobataion.github.io"
 BASE = "/-/"
 NAME = "স্বাস্থ্য বাতায়ন টিপস"
 L = {"food": "খাবার", "sleep": "ঘুম", "move": "ব্যায়াম", "mind": "মনের যত্ন", "safe": "সুরক্ষা",
