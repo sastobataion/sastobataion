@@ -4,8 +4,8 @@ GitHub Actions এটা নিজে থেকে চালায়। হা�
 import json, os, shutil, html, datetime, urllib.request
 import xml.etree.ElementTree as ET
 
-SITE = "https://sastobataion.github.io"
-BASE = "/"
+SITE = "https://facebookhelpbd.github.io/-"
+BASE = "/-/"
 NAME = "স্বাস্থ্য বাতায়ন টিপস"
 L = {"food": "খাবার", "sleep": "ঘুম", "move": "ব্যায়াম", "mind": "মনের যত্ন", "safe": "সুরক্ষা",
      "child": "শিশু", "women": "নারী", "elder": "বয়স্ক", "chronic": "দীর্ঘমেয়াদি রোগ"}
@@ -51,7 +51,7 @@ header{border-bottom:1px solid var(--ln);padding:10px 0}
 .logo img{width:34px;height:34px}
 h1{font-family:"Noto Serif Bengali",serif;font-size:clamp(26px,5vw,36px);font-weight:800;line-height:1.4;margin:6px 0 8px}
 .tag{color:var(--br);font-weight:600;font-size:15px}.mt{color:var(--mu);font-size:15px;margin:0 0 12px}
-.hero{width:100%;border-radius:10px;display:block;margin:10px 0}p{white-space:pre-line}
+.hero{width:100%;border-radius:10px;display:block;margin:10px 0}
 .vid{width:100%;aspect-ratio:16/9;border:0;border-radius:8px;margin:8px 0}
 .box{border-top:1px solid var(--ln);margin-top:18px;padding-top:12px}.box h2{font-size:19px;margin:0 0 6px}
 .box a,.back a{color:var(--br)}.box p{margin:2px 0;color:var(--mu);font-size:16px}
@@ -64,8 +64,6 @@ def page(a, pid, rel, today):
     c = a.get("cat") if a.get("cat") in L else "safe"
     url = f"{SITE}/a/{pid}/"
     paras = a.get("body", [])
-    if paras and paras[0].strip() == a["title"].strip():
-        paras = paras[1:]
     desc = (paras[0] if paras else a["title"]).strip()
     desc = desc[:150] + ("…" if len(desc) > 150 else "")
     img = a.get("img", "")
@@ -184,19 +182,6 @@ def main():
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     sm += "".join(f"  <url><loc>{u}</loc><lastmod>{d}</lastmod></url>\n" for u, d in urls) + "</urlset>\n"
     open("sitemap.xml", "w", encoding="utf-8").write(sm)
-    items = ""
-    for a, pid in list(zip(vis, ids))[:20]:
-        try:
-            pd = datetime.datetime.strptime(a.get("date") or today, "%Y-%m-%d").strftime("%a, %d %b %Y 00:00:00 +0000")
-        except Exception:
-            pd = datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S +0000")
-        bd = a.get("body") or [""]
-        if len(bd) > 1 and bd[0].strip() == a["title"].strip():
-            bd = bd[1:]
-        ds = esc(bd[0][:200])
-        items += f"<item><title>{esc(a['title'])}</title><link>{SITE}/a/{pid}/</link><guid>{SITE}/a/{pid}/</guid><pubDate>{pd}</pubDate><description>{ds}</description></item>\n"
-    fd = f'<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel><title>{esc(NAME)}</title><link>{SITE}/</link><description>সহজ বাংলায় স্বাস্থ্য পরামর্শ</description><language>bn</language>\n{items}</channel></rss>\n'
-    open("feed.xml", "w", encoding="utf-8").write(fd)
     print(f"{len(vis)}টা লেখার পাতা তৈরি হয়েছে")
     fetch_videos()
 
