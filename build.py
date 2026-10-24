@@ -4,8 +4,8 @@ GitHub Actions এটা নিজে থেকে চালায়। হা�
 import json, os, shutil, html, datetime, urllib.request
 import xml.etree.ElementTree as ET
 
-SITE = "https://facebookhelpbd.github.io/-"
-BASE = "/-/"
+SITE = "https://sastobataion.github.io"
+BASE = "/"
 NAME = "স্বাস্থ্য বাতায়ন টিপস"
 L = {"food": "খাবার", "sleep": "ঘুম", "move": "ব্যায়াম", "mind": "মনের যত্ন", "safe": "সুরক্ষা",
      "child": "শিশু", "women": "নারী", "elder": "বয়স্ক", "chronic": "দীর্ঘমেয়াদি রোগ"}
@@ -132,7 +132,7 @@ def page(a, pid, rel, today):
 <p class="back"><a href="{BASE}">← সব লেখা দেখুন</a></p>
 </article></main>
 <footer><div class="w"><div class="note">এই লেখা সাধারণ তথ্যের জন্য, চিকিৎসকের পরামর্শের বিকল্প নয়। শারীরিক সমস্যা থাকলে নিবন্ধিত চিকিৎসকের সঙ্গে কথা বলুন। জরুরি অবস্থায় এখনই নিকটস্থ হাসপাতালে যান।</div>
-<p>© {NAME}। সাইট মালিক: Serajul Islam। যোগাযোগ: <a href="https://wa.me/8801724119866" style="color:var(--br)">হোয়াটসঅ্যাপ</a></p></div></footer>
+<p>© {NAME}। সাইট মালিক: Serajul Islam। যোগাযোগ: <a href="https://wa.me/8801724119866" style="color:var(--br)">হোয়াটসঅ্যাপ</a> · <a href="mailto:sastobataion@gmail.com" style="color:var(--br)">ইমেইল</a></p></div></footer>
 <script>document.getElementById("sh").onclick=function(){{var d={{title:document.title,url:location.href}};if(navigator.share){{navigator.share(d).catch(function(){{}})}}else if(navigator.clipboard){{navigator.clipboard.writeText(d.url).then(function(){{document.getElementById("sh").textContent="লিংক কপি হয়েছে"}})}}}}</script>
 </body>
 </html>
